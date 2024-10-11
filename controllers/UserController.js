@@ -9,7 +9,7 @@ const userDB = "users";
 
 export const getAll = async (req, res) => {
   try {
-    const [rows] = await pool.query(`SELECT * FROM ${userDB}`); // SQL-запрос для выборки всех данных из таблицы testtable
+    const [rows] = await pool.query(`SELECT * FROM ${userDB}`); // SQL-запрос для выборки всех данных из таблицы users
 
     // Отправляем результаты запроса в формате JSON
     res.json(rows);
@@ -37,7 +37,7 @@ export const register = async (req, res) => {
 
   try {
     // Проверка на существование пользователя с таким же email
-    const selectQueryByEmail = "SELECT * FROM testtable WHERE email = ?";
+    const selectQueryByEmail = "SELECT * FROM users WHERE email = ?";
     const [selectQueryByEmailResult] = await pool.query(selectQueryByEmail, [
       email,
     ]);
@@ -54,12 +54,12 @@ export const register = async (req, res) => {
 
     // Вставка нового пользователя в базу данных
     const insertQuery =
-      "INSERT INTO testtable (name, email, passwordHash) VALUES (?, ?, ?)";
+      "INSERT INTO users (name, email, passwordHash) VALUES (?, ?, ?)";
     const [insertResult] = await pool.query(insertQuery, [name, email, hash]);
     const userId = insertResult.insertId;
 
     // Запрос данных нового пользователя
-    const selectQuery = "SELECT * FROM testtable WHERE id = ?";
+    const selectQuery = "SELECT * FROM users WHERE id = ?";
     const [userResult] = await pool.query(selectQuery, [userId]);
 
     // Создание JWT токена
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
 
   try {
     // Проверка на существование пользователя с таким же email
-    const selectQueryByEmail = "SELECT * FROM testtable WHERE email = ?";
+    const selectQueryByEmail = "SELECT * FROM users WHERE email = ?";
     const [selectQueryByEmailResult] = await pool.query(selectQueryByEmail, [
       email,
     ]);
@@ -140,10 +140,9 @@ export const remove = async (req, res) => {
 
   try {
     // Сначала проверяем наличие пользователя
-    const [userResults] = await pool.query(
-      "SELECT * FROM testtable WHERE id = ?",
-      [id]
-    );
+    const [userResults] = await pool.query("SELECT * FROM users WHERE id = ?", [
+      id,
+    ]);
 
     // Если пользователь не найден, возвращаем статус 404
     if (userResults.length === 0) {
@@ -151,10 +150,9 @@ export const remove = async (req, res) => {
     }
 
     // Выполняем запрос на удаление пользователя
-    const [deleteResults] = await pool.query(
-      "DELETE FROM testtable WHERE id = ?",
-      [id]
-    );
+    const [deleteResults] = await pool.query("DELETE FROM users WHERE id = ?", [
+      id,
+    ]);
 
     // Проверяем, был ли удален пользователь
     if (deleteResults.affectedRows === 0) {
@@ -194,7 +192,7 @@ export const update = async (req, res) => {
 
     // Выполняем запрос на обновление данных пользователя
     const [updateResults] = await pool.query(
-      `UPDATE testtable SET name = ? WHERE id = ?`,
+      `UPDATE users SET name = ? WHERE id = ?`,
       [name, id]
     );
 
