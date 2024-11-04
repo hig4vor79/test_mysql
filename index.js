@@ -37,6 +37,7 @@ app.delete("/user/id=:id", UserController.remove);
  *  * Posts
  **/
 app.get("/post", PostController.getAll);
+app.post("/post", PostController.create);
 
 /**
  *  * Main
